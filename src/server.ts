@@ -6,6 +6,7 @@ import morgan from "morgan";
 import routesV1 from "./api/v1/routes/index";
 import { API_PASSWORD, INVALID_TOKEN_MESSAGE, UNPROTECTED_ROUTES, port } from "./config/config";
 import { notFound } from "./utils/not-found";
+import { scheduleJob } from "./scheduled-jobs/hubtel";
 
 const router: Express = express();
 const auth = expressjwt({ secret: API_PASSWORD!, algorithms: ["HS256"] }).unless({ path: UNPROTECTED_ROUTES });
@@ -13,6 +14,8 @@ const auth = expressjwt({ secret: API_PASSWORD!, algorithms: ["HS256"] }).unless
 router.use(morgan("dev"));
 router.use(express.urlencoded({ extended: false }));
 router.use(express.json());
+
+scheduleJob();
 
 /** RULES OF OUR API */
 router.use((req, res, next) => {

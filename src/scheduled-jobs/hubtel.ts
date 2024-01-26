@@ -1,17 +1,17 @@
-import { downloadHubtelData, insertDataIntoDB } from "../functions/hubtel";
+import { processEmailAttachments } from "../functions/hubtel";
 import { parseCSV } from "../utils/utils";
 
 var cron = require("node-cron");
 
-cron.schedule("0 * * * *", async () => {
-  // This will run every hour at minute 0
-  console.log("Running the scraping job");
-  try {
-    const csvData = await downloadHubtelData();
-    const parsedData = await parseCSV(csvData);
-    await insertDataIntoDB(parsedData);
-    console.log("Scraping and insertion successful");
-  } catch (error) {
-    console.error("Failed to complete the cron job:", error);
-  }
-});
+
+export function scheduleJob() {
+  cron.schedule("*/3 * * * *", async () => {
+    // This will run every two minutes
+    console.log("Running the processEmailAttachments job");
+    try {
+      await processEmailAttachments();
+    } catch (error) {
+      console.error("Failed to complete the cron job:", error);
+    }
+  });
+}

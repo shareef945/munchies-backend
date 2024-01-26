@@ -25,3 +25,17 @@ export const HUBTEL_DOWNLOAD_URL = process.env.HUBTEL_DOWNLOAD_URL;
 export const ASHESI_USERNAME = process.env.ASHESI_USERNAME;
 export const ASHESI_PASSWORD = process.env.ASHESI_PASSWORD;
 export const ASHESI_DOWNLOAD_URL = process.env.ASHESI_DOWNLOAD_URL;
+
+//EMAIL
+export const EMAIL_HOST = process.env.EMAIL_HOST;
+export const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
+export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+export const EMAIL_PORT = process.env.EMAIL_PORT;
+
+//DB
+export const DB_HOST = process.env.DB_HOST;
+export const DB_USER = process.env.DB_USER;
+export const DB_PASSWORD = process.env.DB_PASSWORD;
+export const DB_NAME = process.env.DB_NAME;
+export const DB_PORT = process.env.DB_PORT;
+export const TABLE_NAME = process.env.TABLE_NAME;
