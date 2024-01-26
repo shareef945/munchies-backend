@@ -34,7 +34,7 @@ router.use((req, res, next) => {
 });
 
 /** ROUTES */
-router.use("/v1", routesV1);
+router.use("/v1", auth, routesV1);
 
 router.get("/", (req, res) => {
   res.send("Munchies API Server is running, please use the correct endpoint");
