@@ -7,6 +7,10 @@ import routesV1 from "./api/v1/routes/index";
 import { API_PASSWORD, INVALID_TOKEN_MESSAGE, UNPROTECTED_ROUTES, port } from "./config/config";
 import { notFound } from "./utils/not-found";
 import { scheduleJob } from "./scheduled-jobs/hubtel";
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_KEY!;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const router: Express = express();
 const auth = expressjwt({ secret: API_PASSWORD!, algorithms: ["HS256"] }).unless({ path: UNPROTECTED_ROUTES });
@@ -15,7 +19,7 @@ router.use(morgan("dev"));
 router.use(express.urlencoded({ extended: false }));
 router.use(express.json());
 
-scheduleJob();
+// scheduleJob();
 
 /** RULES OF OUR API */
 router.use((req, res, next) => {
@@ -30,7 +34,7 @@ router.use((req, res, next) => {
 });
 
 /** ROUTES */
-router.use("/v1", auth, routesV1);
+router.use("/v1", routesV1);
 
 router.get("/", (req, res) => {
   res.send("Munchies API Server is running, please use the correct endpoint");
