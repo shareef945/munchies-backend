@@ -18,6 +18,7 @@ const { Pool } = require("pg");
 const fs = require("fs");
 const { once } = require("events");
 const fastcsv = require("fast-csv");
+const { parse, format } = require("date-fns");
 
 const imapConfig = {
   user: EMAIL_USERNAME,
@@ -36,66 +37,110 @@ const pool = new Pool({
   port: DB_PORT,
 });
 
-async function processCsvData(csvContent:any) {
+async function processCsvData(csvContent: any) {
   const client = await pool.connect();
   console.log("Connected to the database");
   let pendingInserts = 0;
-  const inserts:any = []; 
+  const inserts: any = [];
 
   try {
     const stream = fastcsv
       .parse({ headers: true })
-      .on("data", (row:any) => {
-        if (!row["Id"] || row["Id"].trim() === "") {
+      .on("data", (row: any) => {
+        if (!row["Date"] || row["Date"].trim() === "") {
           // console.log("Skipping row with null or empty Id");
-          return; 
+          return;
         }
-        pendingInserts++; 
-        stream.pause(); 
+        pendingInserts++;
+        stream.pause();
 
+        let dateStr = row["Date"];
+        let formattedDate;
+
+        if (dateStr.includes(" ")) {
+          formattedDate = dateStr;
+        } else {
+          const parsedDate = parse(dateStr, "MM/dd/yyyyHH:mm:ss", new Date());
+
+          if (isNaN(parsedDate.getTime())) {
+            throw new Error(`Invalid date: ${dateStr}`);
+          }
+
+          formattedDate = format(parsedDate, "yyyy-MM-dd HH:mm:ss");
+        }
         const insertText = `
         INSERT INTO "${TABLE_NAME}"(
-          "Updated By", "Id", " Updated Date", " Name", " Branch Name", " Item Type", 
-          " Category", " Color", " Size", " Weight", " Model", " Other Key", " Other Value", 
-          " Selling Price", " Barcode", " SKU", " New Quantity", " Old Quantity", 
-          " Quantity Difference", " Low Stock Limit", " Expiry Date", " Reason"
+          "Date" ,
+          "Payment Type",
+          "Recurring Payment" ,
+          "Hubtel Transaction Id",
+          "Unique Identifier",
+          "Customer Number",
+          "Customer Name",
+          "Channel",
+          "Network Id",
+          "Client Reference",
+          "Amount Paid",
+          "Amount After Charges",
+          "Charges",
+          "Charge Customer" ,
+          "Note",
+          "Description",
+          "Employee Name",
+          "Branch Name",
+          "Status",
+          "Provider Response Code",
+          "Receipt Number",
+          "Currency",
+          "Card Scheme",
+          "Card Number",
+          "Card Transaction Id",
+          "Amount Tendered",
+          "Is Refunded" ,
+          "Hubtel Reference"
         ) VALUES(
           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 
-          $15, $16, $17, $18, $19, $20, $21, $22
+          $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28
         )`;
         const insertValues = [
-          row["Updated By"],
-          row["Id"],
-          row[" Updated Date"],
-          row[" Name"],
-          row[" Branch Name"],
-          row[" Item Type"],
-          row[" Category"],
-          row[" Color"],
-          row[" Size"],
-          row[" Weight"],
-          row[" Model"],
-          row[" Other Key"],
-          row[" Other Value"],
-          row[" Selling Price"],
-          row[" Barcode"],
-          row[" SKU"],
-          row[" New Quantity"],
-          row[" Old Quantity"],
-          row[" Quantity Difference"],
-          row[" Low Stock Limit"],
-          row[" Expiry Date"],
-          row[" Reason"],
+          formattedDate,
+          row["Payment Type"],
+          row["Recurring Payment"],
+          row["Hubtel Transaction Id"],
+          row["Unique Identifier"],
+          row["Customer Number"],
+          row["Customer Name"],
+          row["Channel"],
+          row["Network Id"],
+          row["Client Reference"],
+          row["Amount Paid"],
+          row["Amount After Charges"],
+          row["Charges"],
+          row["Charge Customer"],
+          row["Note"],
+          row["Description"],
+          row["Employee Name"],
+          row["Branch Name"],
+          row["Status"],
+          row["Provider Response Code"],
+          row["Receipt Number"],
+          row["Currency"],
+          row["Card Scheme"],
+          row["Card Number"],
+          row["Card Transaction Id"],
+          row["Amount Tendered"],
+          row["Is Refunded"],
+          row["Hubtel Reference"],
         ];
-
+        console.log("Inserting data please wait...");
         inserts.push(
           client
             .query(insertText, insertValues)
-            .catch((insertError:any) => {
+            .catch((insertError: any) => {
               console.error("Error inserting data:", insertError);
             })
             .finally(() => {
-              pendingInserts--; 
+              pendingInserts--;
               if (pendingInserts === 0) {
                 stream.resume();
               }
@@ -106,24 +151,24 @@ async function processCsvData(csvContent:any) {
         console.log(
           "Finished processing CSV data. Waiting for all inserts to complete."
         );
-        await Promise.all(inserts); 
+        await Promise.all(inserts);
         client.release();
         console.log("All data inserted and database connection released.");
       })
-      .on("error", (error:any) => {
+      .on("error", (error: any) => {
         console.error("Error processing CSV data:", error);
       });
 
-    // Pipe the CSV content to the stream
+
     stream.write(csvContent);
     stream.end();
   } catch (dbErr) {
     console.error("Database error:", dbErr);
-    await client.release(); 
+    await client.release();
   }
 }
 
-// Function to process email attachments
+
 export function processEmailAttachments(): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     const imap = new Imap(imapConfig);

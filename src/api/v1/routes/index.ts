@@ -4,6 +4,6 @@ import hubtelController from "../controllers/hubtel";
 
 const router = express.Router();
 
-router.get("/hubtel", hubtelController.getData);
+router.get("/hubtel", hubtelController.getDataBetweenDates);
 
 export = router;
