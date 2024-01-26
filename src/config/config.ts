@@ -1,13 +1,16 @@
+import e from "express";
+
 //PORTS
 export const port = process.env.API_PORT || 3000;
 
 //CONSTANTS
 export const INVALID_PASSWORD_MASSAGE = "Invalid password, please try again";
 export const INVALID_TOKEN_MESSAGE = "Invalid token";
-export const UNPROTECTED_ROUTES = ["/transport/v1/login", "/transport/v1/auth/login", "/transport/v1/auth/token/refresh"];
+export const UNPROTECTED_ROUTES = ["/v1/login"];
 
 //ENVIRONMENT VARIABLES
 export const API_PASSWORD = process.env.API_PASSWORD;
+export const API_SECRET = process.env.API_SECRET;
 
 // STATUS CODES
 export const STATUS_OK = 200;
