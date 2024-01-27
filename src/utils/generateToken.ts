@@ -7,3 +7,5 @@ export function generateToken(
 ) {
   return jwt.sign({ userId, client }, password, { expiresIn: "1h" });
 }
+
+//testing
