@@ -1,7 +1,7 @@
 import e from "express";
 
 //PORTS
-export const port = process.env.API_PORT || 80;
+export const port = process.env.PORT || 3000;
 
 //CONSTANTS
 export const INVALID_PASSWORD_MASSAGE = "Invalid password, please try again";
