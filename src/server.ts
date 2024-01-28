@@ -1,10 +1,16 @@
+import cors from "cors";
 require("dotenv").config();
 import express, { Express } from "express";
 import { expressjwt } from "express-jwt";
 import http from "http";
 import morgan from "morgan";
 import routesV1 from "./api/v1/routes/index";
-import { API_PASSWORD, INVALID_TOKEN_MESSAGE, UNPROTECTED_ROUTES, port } from "./config/config";
+import {
+  API_PASSWORD,
+  INVALID_TOKEN_MESSAGE,
+  UNPROTECTED_ROUTES,
+  port,
+} from "./config/config";
 import { notFound } from "./utils/not-found";
 import { scheduleJob } from "./scheduled-jobs/hubtel";
 import { createClient } from "@supabase/supabase-js";
@@ -13,21 +19,31 @@ const supabaseKey = process.env.SUPABASE_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const router: Express = express();
-const auth = expressjwt({ secret: API_PASSWORD!, algorithms: ["HS256"] }).unless({ path: UNPROTECTED_ROUTES });
+const auth = expressjwt({
+  secret: API_PASSWORD!,
+  algorithms: ["HS256"],
+}).unless({ path: UNPROTECTED_ROUTES });
 
 router.use(morgan("dev"));
 router.use(express.urlencoded({ extended: false }));
 router.use(express.json());
+router.use(cors());
 
 // scheduleJob();
 
 /** RULES OF OUR API */
 router.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "origin, X-Requested-With,Content-Type,Accept, Authorization");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "origin, X-Requested-With,Content-Type,Accept, Authorization"
+  );
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
     return res.status(200).json({});
   }
   next();
@@ -58,4 +74,6 @@ router.use((req, res, next) => {
 /** SERVER */
 const httpServer = http.createServer(router);
 const PORT: any = port;
-httpServer.listen(PORT, () => console.log(`Munchies backend is running on ${PORT}`));
+httpServer.listen(PORT, () =>
+  console.log(`Munchies backend is running on ${PORT}`)
+);
