@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.ts",
     "build": "rm -rf build/ && tsc",
-    "start": "node src/server.ts",
+    "start": "node build/server.js",
     "heroku-postbuild": "npm run build"
   },
   "author": "shareef ali",
@@ -21,6 +21,7 @@
     "@types/uuid": "^9.0.7",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
     "date-fns": "^3.3.1",
     "dotenv": "^16.3.1",

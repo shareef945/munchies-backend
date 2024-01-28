@@ -43,7 +43,7 @@ const getDataBetweenDates = async (
     .lte("Date", formattedToDate);
   if (error) {
     console.error("Supabase query error:", error);
-    throw error;
+    return res.status(500).json({ error: "Database query failed" });
   }
   return res.status(STATUS_OK).json({
     message: "Data retrieved successfully",
