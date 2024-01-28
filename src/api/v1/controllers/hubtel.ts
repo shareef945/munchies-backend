@@ -6,7 +6,9 @@ import { formatDateQuery } from "../../../utils/utils";
 const getData = async (req: Request, res: Response, next: NextFunction) => {
   const { data: hubtel_transactions, error } = await supabase
     .from("hubtel-transactions")
-    .select("*");
+    .select(
+      '"Date","Employee Name", "Amount After Charges", "Description", "Payment Type"'
+    );
   if (error) {
     console.error("Supabase query error:", error);
     throw error;
