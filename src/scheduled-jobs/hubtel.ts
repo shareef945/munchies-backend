@@ -1,13 +1,11 @@
+import { HOUR_OF_THE_DAY } from "../config/config";
 import { processEmailAttachments } from "../functions/hubtel";
-import { parseCSV } from "../utils/utils";
 
 var cron = require("node-cron");
 
-
-export function scheduleJob() {
-  cron.schedule("*/3 * * * *", async () => {
-    // This will run every two minutes
-    console.log("Running the processEmailAttachments job");
+export function scheduleHubtelJob() {
+  cron.schedule(`0 ${HOUR_OF_THE_DAY} * * *`, async () => {
+    console.log("Running the HUBTEL job");
     try {
       await processEmailAttachments();
     } catch (error) {

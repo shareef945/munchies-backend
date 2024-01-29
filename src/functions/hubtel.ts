@@ -12,6 +12,7 @@ import {
   HUBTEL_USERNAME,
   TABLE_NAME,
 } from "../config/config";
+import { sendTwilioMessage } from "./sms";
 const Imap = require("imap");
 const { simpleParser } = require("mailparser");
 const { Pool } = require("pg");
@@ -44,6 +45,7 @@ async function processCsvData(csvContent: any) {
   const inserts: any = [];
 
   try {
+    console.log("Inserting data please wait...");
     const stream = fastcsv
       .parse({ headers: true })
       .on("data", (row: any) => {
@@ -99,7 +101,7 @@ async function processCsvData(csvContent: any) {
           "Is Refunded" ,
           "Hubtel Reference"
         ) VALUES(
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
           $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28
         )`;
         const insertValues = [
@@ -132,7 +134,7 @@ async function processCsvData(csvContent: any) {
           row["Is Refunded"],
           row["Hubtel Reference"],
         ];
-        console.log("Inserting data please wait...");
+        // console.log("Inserting data please wait...");
         inserts.push(
           client
             .query(insertText, insertValues)
@@ -144,21 +146,22 @@ async function processCsvData(csvContent: any) {
               if (pendingInserts === 0) {
                 stream.resume();
               }
-            })
+            }),
         );
       })
       .on("end", async () => {
         console.log(
-          "Finished processing CSV data. Waiting for all inserts to complete."
+          "Finished processing CSV data. Waiting for all inserts to complete.",
         );
+        sendTwilioMessage("Hubtel data processed successfully.");
         await Promise.all(inserts);
         client.release();
         console.log("All data inserted and database connection released.");
       })
       .on("error", (error: any) => {
         console.error("Error processing CSV data:", error);
+        sendTwilioMessage("Error processing Hubtel data, please check logs.");
       });
-
 
     stream.write(csvContent);
     stream.end();
@@ -167,7 +170,6 @@ async function processCsvData(csvContent: any) {
     await client.release();
   }
 }
-
 
 export function processEmailAttachments(): Promise<void> {
   return new Promise<void>((resolve, reject) => {
@@ -204,7 +206,7 @@ export function processEmailAttachments(): Promise<void> {
                   for (const attachment of parsed.attachments) {
                     if (attachment.contentType === "text/csv") {
                       console.log(
-                        `Processing attachment: ${attachment.filename}`
+                        `Processing attachment: ${attachment.filename}`,
                       );
                       await processCsvData(attachment.content);
                     }
@@ -217,7 +219,7 @@ export function processEmailAttachments(): Promise<void> {
               imap.end();
               resolve(undefined); // Pass undefined to resolve
             });
-          }
+          },
         );
       });
     });

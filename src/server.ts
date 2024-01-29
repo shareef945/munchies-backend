@@ -12,7 +12,7 @@ import {
   port,
 } from "./config/config";
 import { notFound } from "./utils/not-found";
-import { scheduleJob } from "./scheduled-jobs/hubtel";
+import { scheduleHubtelJob } from "./scheduled-jobs/hubtel";
 import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_KEY!;
@@ -29,20 +29,20 @@ router.use(express.urlencoded({ extended: false }));
 router.use(express.json());
 router.use(cors());
 
-// scheduleJob();
+scheduleHubtelJob();
 
 /** RULES OF OUR API */
 router.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "origin, X-Requested-With,Content-Type,Accept, Authorization"
+    "origin, X-Requested-With,Content-Type,Accept, Authorization",
   );
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.header(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
     );
     return res.status(200).json({});
   }
@@ -75,5 +75,5 @@ router.use((req, res, next) => {
 const httpServer = http.createServer(router);
 const PORT: any = port;
 httpServer.listen(PORT, () =>
-  console.log(`Munchies backend is running on ${PORT}`)
+  console.log(`Munchies backend is running on ${PORT}`),
 );
