@@ -1,5 +1,3 @@
-import e from "express";
-
 //PORTS
 export const port = process.env.PORT || 3000;
 
@@ -11,6 +9,7 @@ export const UNPROTECTED_ROUTES = ["/v1/login"];
 //ENVIRONMENT VARIABLES
 export const API_PASSWORD = process.env.API_PASSWORD;
 export const API_SECRET = process.env.API_SECRET;
+export const HOUR_OF_THE_DAY = process.env.HOUR_OF_THE_DAY;
 
 // STATUS CODES
 export const STATUS_OK = 200;
@@ -42,3 +41,9 @@ export const DB_PASSWORD = process.env.DB_PASSWORD;
 export const DB_NAME = process.env.DB_NAME;
 export const DB_PORT = process.env.DB_PORT;
 export const TABLE_NAME = process.env.TABLE_NAME;
+
+//SMS
+export const TWILIO_SID = process.env.TWILIO_SID;
+export const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+export const TWILIO_NUMBER = process.env.TWILIO_NUMBER;
+export const TWILIO_RECEIPIENT = process.env.TWILIO_RECEIPIENT;

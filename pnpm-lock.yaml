@@ -68,6 +68,9 @@ dependencies:
   node-cron:
     specifier: ^3.0.3
     version: 3.0.3
+  nodemailer:
+    specifier: ^6.9.8
+    version: 6.9.8
   nodemon:
     specifier: ^3.0.1
     version: 3.0.3
@@ -77,6 +80,9 @@ dependencies:
   ts-node:
     specifier: ^10.9.1
     version: 10.9.2(@types/node@20.11.6)(typescript@5.3.3)
+  twilio:
+    specifier: ^4.21.0
+    version: 4.21.0
   typescript:
     specifier: ^5.3.2
     version: 5.3.3
@@ -1288,8 +1294,6 @@ packages:
       debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
-    dev: true
-    optional: true
 
   /agent-base@7.1.0:
     resolution: {integrity: sha512-o/zjMZRhJxny7OyEF+Op8X+efiELC7k7yOjMzgfzVqOzXqkBkWI79YoTdOtsuWd5BWhAGAuOY/Xa6xpiaWXiNg==}
@@ -1761,6 +1765,10 @@ packages:
 
   /date-fns@3.3.1:
     resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
+    dev: false
+
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
     dev: false
 
   /debug@2.6.9:
@@ -2500,8 +2508,6 @@ packages:
       debug: 4.3.4(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
-    dev: true
-    optional: true
 
   /https-proxy-agent@7.0.2:
     resolution: {integrity: sha512-NmLNjm6ucYwtcUmL7JQC1ZQ57LmHP4lT15FQ8D61nak1rO6DH+fz5qNK2Ap5UN4ZapYICE3/0KodcLYSPsPbaA==}
@@ -3872,7 +3878,10 @@ packages:
     engines: {node: '>=0.6'}
     dependencies:
       side-channel: 1.0.4
-    dev: true
+
+  /querystringify@2.2.0:
+    resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
+    dev: false
 
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -3922,6 +3931,10 @@ packages:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /requires-port@1.0.0:
+    resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+    dev: false
 
   /resolve-cwd@3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
@@ -3979,6 +3992,10 @@ packages:
 
   /safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
+  /scmp@2.1.0:
+    resolution: {integrity: sha512-o/mRQGk9Rcer/jEEw/yw4mwo3EU/NvYvp577/Btqrym9Qy5/MdWGBqipbALgd2lrdWTJ5/gqDusxfnQBxOxT2Q==}
+    dev: false
 
   /selderee@0.11.0:
     resolution: {integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==}
@@ -4349,6 +4366,23 @@ packages:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: true
 
+  /twilio@4.21.0:
+    resolution: {integrity: sha512-+meDbJPOxs6vEysJ7xX7XMn6FLKmZFSeVzMKjzN9NWgDXssp713Kf1ukteZlXhnhd7/NtNiUv5OU17qVgBb/BQ==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      axios: 1.6.5
+      dayjs: 1.11.10
+      https-proxy-agent: 5.0.1
+      jsonwebtoken: 9.0.2
+      qs: 6.11.2
+      scmp: 2.1.0
+      url-parse: 1.5.10
+      xmlbuilder: 13.0.2
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+    dev: false
+
   /type-detect@4.0.8:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
     engines: {node: '>=4'}
@@ -4396,6 +4430,13 @@ packages:
       escalade: 3.1.1
       picocolors: 1.0.0
     dev: true
+
+  /url-parse@1.5.10:
+    resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
+    dependencies:
+      querystringify: 2.2.0
+      requires-port: 1.0.0
+    dev: false
 
   /utf7@1.0.2:
     resolution: {integrity: sha512-qQrPtYLLLl12NF4DrM9CvfkxkYI97xOb5dsnGZHE3teFr0tWiEZ9UdgMPczv24vl708cYMpe6mGXGHrotIp3Bw==}
@@ -4512,6 +4553,11 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
+
+  /xmlbuilder@13.0.2:
+    resolution: {integrity: sha512-Eux0i2QdDYKbdbA6AM6xE4m6ZTZr4G4xF9kahI2ukSEMCzwce2eX9WlTI5J3s+NU7hpasFsr8hWIONae7LluAQ==}
+    engines: {node: '>=6.0'}
     dev: false
 
   /xtend@4.0.2:
