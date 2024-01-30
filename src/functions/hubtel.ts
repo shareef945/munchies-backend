@@ -146,12 +146,12 @@ async function processCsvData(csvContent: any) {
               if (pendingInserts === 0) {
                 stream.resume();
               }
-            }),
+            })
         );
       })
       .on("end", async () => {
         console.log(
-          "Finished processing CSV data. Waiting for all inserts to complete.",
+          "Finished processing CSV data. Waiting for all inserts to complete."
         );
         sendTwilioMessage("Hubtel data processed successfully.");
         await Promise.all(inserts);
@@ -206,7 +206,7 @@ export function processEmailAttachments(): Promise<void> {
                   for (const attachment of parsed.attachments) {
                     if (attachment.contentType === "text/csv") {
                       console.log(
-                        `Processing attachment: ${attachment.filename}`,
+                        `Processing attachment: ${attachment.filename}`
                       );
                       await processCsvData(attachment.content);
                     }
@@ -219,11 +219,68 @@ export function processEmailAttachments(): Promise<void> {
               imap.end();
               resolve(undefined); // Pass undefined to resolve
             });
-          },
+          }
         );
       });
     });
 
     imap.connect();
   });
+}
+
+export function getPieChartData(transactions: any[]) {
+  const labels = {
+    mobileMoney: "Mobile Money",
+    card: "Card",
+    cash: "Cash",
+  };
+
+  return Object.entries(
+    transactions.reduce(
+      (acc: any, curr: any) => {
+        const { "Payment Type": paymentType, "Amount After Charges": amount } =
+          curr;
+        if (paymentType === "mobilemoney") {
+          acc.mobileMoney += amount;
+        } else if (paymentType === "card") {
+          acc.card += amount;
+        } else if (paymentType === "cash") {
+          acc.cash += amount;
+        }
+        return acc;
+      },
+      { mobileMoney: 0, card: 0, cash: 0 }
+    )
+  ).map(([key, value]) => ({
+    name: labels[key as keyof typeof labels],
+    sales: value,
+  }));
+}
+
+export function getMonthlyRevenueChartData(transactions: any[], transactionType?: string) {
+  const labels: { [key: string]: string } = {
+    mobilemoney: "Mobile Money",
+    card: "Card",
+    cash: "Cash",
+  };
+
+  const grouped = transactions.reduce((acc: any, curr: any) => {
+    if (transactionType && curr["Payment Type"] !== transactionType) {
+      return acc;
+    }
+    const month = new Date(curr.Date).toLocaleString("default", {
+      month: "short",
+    });
+    const group = labels[curr["Payment Type"]];
+    if (!acc[month]) {
+      acc[month] = { month };
+    }
+    if (!acc[month][group]) {
+      acc[month][group] = 0;
+    }
+    acc[month][group] += curr["Amount After Charges"];
+    return acc;
+  }, {});
+
+  return Object.values(grouped);
 }
