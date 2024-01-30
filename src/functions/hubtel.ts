@@ -42,6 +42,7 @@ async function processCsvData(csvContent: any) {
   const client = await pool.connect();
   console.log("Connected to the database");
   let pendingInserts = 0;
+
   const inserts: any = [];
 
   try {
