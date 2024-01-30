@@ -59,9 +59,6 @@ const getDataBetweenDates = async (
     totalQuantity: hubtel_transactions.length,
     pieChart: getPieChartData(hubtel_transactions),
     monthlyRevenueChart: getMonthlyRevenueChartData(hubtel_transactions),
-    momoTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "mobilemoney"),
-    cardTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "card"),
-    cashTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "cash"),
     transactions: hubtel_transactions,
   });
 };
