@@ -257,30 +257,30 @@ export function getPieChartData(transactions: any[]) {
   }));
 }
 
-export function getMonthlyRevenueChartData(transactions: any[], transactionType?: string) {
+export function getMonthlyRevenueChartData(transactions: any[]) {
   const labels: { [key: string]: string } = {
     mobilemoney: "Mobile Money",
     card: "Card",
     cash: "Cash",
   };
 
-  const grouped = transactions.reduce((acc: any, curr: any) => {
-    if (transactionType && curr["Payment Type"] !== transactionType) {
-      return acc;
+  // Initialize all months with 0 for each payment type
+  const grouped: { [key: string]: any } = {};
+  const months = Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'short' }));
+  for (const month of months) {
+    grouped[month] = { month };
+    for (const label of Object.values(labels)) {
+      grouped[month][label] = 0;
     }
+  }
+
+  transactions.forEach((curr: any) => {
     const month = new Date(curr.Date).toLocaleString("default", {
       month: "short",
     });
     const group = labels[curr["Payment Type"]];
-    if (!acc[month]) {
-      acc[month] = { month };
-    }
-    if (!acc[month][group]) {
-      acc[month][group] = 0;
-    }
-    acc[month][group] += curr["Amount After Charges"];
-    return acc;
-  }, {});
+    grouped[month][group] += curr["Amount After Charges"];
+  });
 
   return Object.values(grouped);
 }
