@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { STATUS_BAD_REQUEST, STATUS_OK } from "../../../config/config";
 import { supabase } from "../../../server";
 import { formatDateQuery } from "../../../utils/utils";
+import { getMonthlyRevenueChartData, getPieChartData } from "../../../functions/hubtel";
 
 const getData = async (req: Request, res: Response, next: NextFunction) => {
   const { data: hubtel_transactions, error } = await supabase
@@ -40,7 +41,9 @@ const getDataBetweenDates = async (
 
   const { data: hubtel_transactions, error } = await supabase
     .from("hubtel-transactions")
-    .select("*")
+    .select(
+      '"Date","Employee Name", "Amount After Charges", "Description", "Payment Type"'
+    )
     .gte("Date", formattedFromDate)
     .lte("Date", formattedToDate);
   if (error) {
@@ -54,7 +57,12 @@ const getDataBetweenDates = async (
       0
     ),
     totalQuantity: hubtel_transactions.length,
-    data: hubtel_transactions,
+    pieChart: getPieChartData(hubtel_transactions),
+    monthlyRevenueChart: getMonthlyRevenueChartData(hubtel_transactions),
+    momoTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "mobilemoney"),
+    cardTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "card"),
+    cashTrendsChart: getMonthlyRevenueChartData(hubtel_transactions, "cash"),
+    transactions: hubtel_transactions,
   });
 };
 
