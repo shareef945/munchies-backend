@@ -38,6 +38,7 @@ const pool = new Pool({
   port: DB_PORT,
 });
 
+//figure out how to send SMS for failed inserts.
 async function processCsvData(csvContent: any) {
   const client = await pool.connect();
   console.log("Connected to the database");
