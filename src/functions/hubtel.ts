@@ -203,6 +203,11 @@ export function processEmailAttachments(): Promise<void> {
     const imap = new Imap(imapConfig);
     console.log("Connecting to the email server");
 
+    imap.once('error', function(err:any) {
+      console.error('Connection error:', err);
+      sendTwilioMessage('Error connecting to email server, please check logs.'); // Send an SMS
+    });
+
     imap.once("ready", () => {
       console.log("Connected to the email server");
       imap.openBox("INBOX", false, () => {
