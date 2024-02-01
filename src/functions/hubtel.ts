@@ -46,6 +46,8 @@ async function processCsvData(csvContent: any) {
 
   const inserts: any = [];
 
+  let duplicateErrorOccurred = false;
+
   try {
     console.log("Inserting data please wait...");
     const stream = fastcsv
@@ -54,6 +56,10 @@ async function processCsvData(csvContent: any) {
         if (!row["Date"] || row["Date"].trim() === "") {
           // console.log("Skipping row with null or empty Id");
           return;
+        }
+
+        if (duplicateErrorOccurred) {
+          return; // Skip further processing if a duplicate error has been encountered
         }
         pendingInserts++;
         stream.pause();
@@ -141,11 +147,29 @@ async function processCsvData(csvContent: any) {
           client
             .query(insertText, insertValues)
             .catch((insertError: any) => {
-              console.error("Error inserting data:", insertError);
+              if (insertError.code === "23505") {
+                // PostgreSQL error code for unique violation
+                if (!duplicateErrorOccurred) {
+                  duplicateErrorOccurred = true;
+                  // console.error(
+                  //   "Duplicate data detected, stopping further inserts:",
+                  //   insertError
+                  // );
+                  sendTwilioMessage(
+                    "Duplicate data detected, stopping further inserts."
+                  );
+                  console.log(
+                    "Duplicate data detected, stopping further inserts."
+                  );
+                  stream.end(); // Stop processing the CSV
+                }
+              } else {
+                console.error("Error inserting data:", insertError);
+              }
             })
             .finally(() => {
               pendingInserts--;
-              if (pendingInserts === 0) {
+              if (pendingInserts === 0 && !duplicateErrorOccurred) {
                 stream.resume();
               }
             })
