@@ -169,6 +169,7 @@ async function processCsvData(csvContent: any) {
     stream.end();
   } catch (dbErr) {
     console.error("Database error:", dbErr);
+    sendTwilioMessage("Error processing Hubtel data, please check logs.");
     await client.release();
   }
 }
@@ -268,7 +269,9 @@ export function getMonthlyRevenueChartData(transactions: any[]) {
 
   // Initialize all months with 0 for each payment type
   const grouped: { [key: string]: any } = {};
-  const months = Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'short' }));
+  const months = Array.from({ length: 12 }, (_, i) =>
+    new Date(0, i).toLocaleString("default", { month: "short" })
+  );
   for (const month of months) {
     grouped[month] = { month };
     for (const label of Object.values(labels)) {
