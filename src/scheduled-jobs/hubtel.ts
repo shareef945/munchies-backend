@@ -6,8 +6,7 @@ var cron = require("node-cron");
 export function scheduleHubtelJob() {
   cron.schedule(`0 ${HOUR_OF_THE_DAY} * * *`, async () => {
     // cron.schedule("*/3 * * * *", async () => {
-    console.log("Running the HUBTEL job");
-    console.log(new Date().toLocaleString());
+    console.log(`Running the HUBTEL job at ${new Date().toLocaleString()}`);
     try {
       await processEmailAttachments();
     } catch (error) {
