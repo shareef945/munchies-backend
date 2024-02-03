@@ -4,8 +4,8 @@ import { processEmailAttachments } from "../functions/hubtel";
 var cron = require("node-cron");
 
 export function scheduleHubtelJob() {
-  cron.schedule(`0 ${HOUR_OF_THE_DAY} * * *`, async () => {
-    // cron.schedule("*/3 * * * *", async () => {
+  // cron.schedule(`0 ${HOUR_OF_THE_DAY} * * *`, async () => {
+    cron.schedule("*/1 * * * *", async () => {
     console.log(`Running the HUBTEL job at ${new Date().toLocaleString()}`);
     try {
       await processEmailAttachments();
