@@ -37,6 +37,7 @@
     "nodemailer": "^6.9.8",
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
+    "ssh2-sftp-client": "^10.0.3",
     "ts-node": "^10.9.1",
     "twilio": "^4.21.0",
     "typescript": "^5.3.2",
