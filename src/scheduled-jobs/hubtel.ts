@@ -14,3 +14,5 @@ export function scheduleHubtelJob() {
     }
   });
 }
+
+//TODO: get data from ftp server instead
