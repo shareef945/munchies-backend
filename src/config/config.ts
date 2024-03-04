@@ -47,3 +47,11 @@ export const TWILIO_SID = process.env.TWILIO_SID;
 export const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 export const TWILIO_NUMBER = process.env.TWILIO_NUMBER;
 export const TWILIO_RECEIPIENT = process.env.TWILIO_RECEIPIENT;
+
+//SFTP
+export const SFTP_CONFIG = {
+  host: process.env.SFTP_SERVER,
+  port: process.env.SFTP_PORT,
+  username: process.env.SFTP_USERNAME,
+  password: process.env.SFTP_PASSWORD,
+};

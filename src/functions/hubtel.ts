@@ -4,31 +4,12 @@ import {
   DB_PASSWORD,
   DB_PORT,
   DB_USER,
-  EMAIL_HOST,
-  EMAIL_PASSWORD,
-  EMAIL_PORT,
-  EMAIL_USERNAME,
-  HUBTEL_PASSWORD,
-  HUBTEL_USERNAME,
   TABLE_NAME,
 } from "../config/config";
 import { sendTwilioMessage } from "./sms";
-const Imap = require("imap");
-const { simpleParser } = require("mailparser");
 const { Pool } = require("pg");
-const fs = require("fs");
-const { once } = require("events");
 const fastcsv = require("fast-csv");
 const { parse, format } = require("date-fns");
-
-const imapConfig = {
-  user: EMAIL_USERNAME,
-  password: EMAIL_PASSWORD,
-  host: EMAIL_HOST,
-  port: EMAIL_PORT,
-  tls: true,
-  tlsOptions: { rejectUnauthorized: false },
-};
 
 const pool = new Pool({
   user: DB_USER,
@@ -39,7 +20,7 @@ const pool = new Pool({
 });
 
 //figure out how to send SMS for failed inserts.
-async function processCsvData(csvContent: any) {
+export async function processCsvData(csvContent: any) {
   const client = await pool.connect();
   console.log("Connected to the database");
   let pendingInserts = 0;
@@ -198,68 +179,6 @@ async function processCsvData(csvContent: any) {
   }
 }
 
-export function processEmailAttachments(): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    const imap = new Imap(imapConfig);
-    console.log("Connecting to the email server");
-
-    imap.once('error', function(err:any) {
-      console.error('Connection error:', err);
-      sendTwilioMessage('Error connecting to email server, please check logs.'); // Send an SMS
-    });
-
-    imap.once("ready", () => {
-      console.log("Connected to the email server");
-      imap.openBox("INBOX", false, () => {
-        console.log("Opened the inbox");
-        imap.search(
-          ["UNSEEN", ["SINCE", new Date()]],
-          async (err: any, results: any) => {
-            if (err || !results.length) {
-              console.log("No unread emails found");
-              imap.end();
-              resolve(undefined); // Pass undefined to resolve
-              return;
-            }
-
-            console.log("Found unread emails");
-            const f = imap.fetch(results, { bodies: "" });
-
-            f.on("message", (msg: any, seqno: any) => {
-              console.log(`Processing message ${seqno}`);
-              msg.on("body", (stream: any) => {
-                simpleParser(stream, async (err: any, parsed: any) => {
-                  if (err) {
-                    console.error("Error parsing email:", err);
-                    reject(err);
-                    return;
-                  }
-
-                  for (const attachment of parsed.attachments) {
-                    if (attachment.contentType === "text/csv") {
-                      console.log(
-                        `Processing attachment: ${attachment.filename}`
-                      );
-                      await processCsvData(attachment.content);
-                    }
-                  }
-                });
-              });
-            });
-
-            f.once("end", () => {
-              imap.end();
-              resolve(undefined); // Pass undefined to resolve
-            });
-          }
-        );
-      });
-    });
-
-    imap.connect();
-  });
-}
-
 export function getPieChartData(transactions: any[]) {
   const labels = {
     mobileMoney: "Mobile Money",
@@ -296,7 +215,6 @@ export function getMonthlyRevenueChartData(transactions: any[]) {
     cash: "Cash",
   };
 
-  // Initialize all months with 0 for each payment type
   const grouped: { [key: string]: any } = {};
   const months = Array.from({ length: 12 }, (_, i) =>
     new Date(0, i).toLocaleString("default", { month: "short" })
