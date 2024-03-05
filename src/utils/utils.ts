@@ -75,7 +75,7 @@ export async function downloadCsvFromSftp() {
     const csvFiles = fileList.filter((file) => file.name.endsWith(".csv"));
 
     if (csvFiles.length === 0) {
-      throw new Error("No CSV files found in the remote directory.");
+      console.log("No CSV files found in the remote directory.");
     }
 
     const firstCsvFile = csvFiles[0];
