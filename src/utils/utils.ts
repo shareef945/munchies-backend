@@ -61,7 +61,7 @@ export function formatDateQuery(date: Date | string): string {
 export async function downloadCsvFromSftp() {
   console.log("Checking for CSV data...");
   const sftp = new SftpClient();
-  const remotePath = "/munchies/input";
+  const remotePath = "/input";
 
   try {
     await sftp.connect({
@@ -98,8 +98,8 @@ export async function moveFilesFromSftp() {
   console.log("Moving files...");
   const sftp = new SftpClient();
 
-  const inputPath = "/munchies/input";
-  const processedPath = "/munchies/processed";
+  const inputPath = "/input";
+  const processedPath = "/processed";
   try {
     await sftp.connect({
       host: SFTP_CONFIG.host,
