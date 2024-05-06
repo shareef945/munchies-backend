@@ -5,7 +5,7 @@ import { downloadCsvFromSftp, moveFilesFromSftp } from "../utils/utils";
 var cron = require("node-cron");
 
 export async function scheduleHubtelJob() {
-  // cron.schedule("41 14 * * *", async () => {
+  // cron.schedule("41 13 * * *", async () => {
   cron.schedule(`0 ${HOUR_OF_THE_DAY} * * *`, async () => {
     console.log(`Running the HUBTEL job at ${new Date().toLocaleString()}`);
 
@@ -18,7 +18,7 @@ export async function scheduleHubtelJob() {
     }
   });
 
-  cron.schedule("0 9 * * *", async () => {
+  cron.schedule("00 9 * * *", async () => {
     console.log(`Moving files at${new Date().toLocaleString()}`);
     try {
       await moveFilesFromSftp();
